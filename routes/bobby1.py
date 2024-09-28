@@ -28,12 +28,14 @@ def bugfixer():
         return jsonify({"error": "'time' must be a list and 'prerequisites' must be a list"}), 400
     
     # Ensure time array is not empty
-    if len(time) == 0:
+    if not time:
         return jsonify({"error": "'time' array is empty"}), 400
 
     # Function to calculate the minimum hours to resolve all bugs
     def min_hours_to_resolve_bugs(time, prerequisites):
+        n = ''
         n = len(time)
+        
         
         # Create graph and in-degree array
         graph = defaultdict(list)
