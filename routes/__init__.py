@@ -9,3 +9,4 @@ import routes.bobby2
 import routes.kazuma
 # import routes.wordlegame
 import routes.digital_colony
+import routes.wordlegame
