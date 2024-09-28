@@ -1,6 +1,15 @@
 from datetime import datetime
 import pytz
 
+import json
+import logging
+from flask import request, jsonify
+from routes import app
+
+logger = logging.getLogger(__name__)
+
+@app.route('/mailtime', methods=['POST'])
+
 # Helper function to parse and convert timestamps to UTC
 def parse_time(time_str):
     return datetime.fromisoformat(time_str[:-6] + time_str[-6:])
@@ -38,47 +47,47 @@ def calculate_response_times(data):
     
     return avg_response_times
 
-# Example data input
-data = {
-    "emails": [
-        {
-          "subject": "subject",
-          "sender": "Alice",
-          "receiver": "Bob",
-          "timeSent": "2024-01-12T15:00:00+01:00"
-        },
-        {
-          "subject": "RE: subject",
-          "sender": "Bob",
-          "receiver": "Alice",
-          "timeSent": "2024-01-15T09:00:00+08:00"
-        },
-        {
-          "subject": "RE: RE: subject",
-          "sender": "Alice",
-          "receiver": "Bob",
-          "timeSent": "2024-01-16T09:05:00+01:00"
-        }
-    ],
-    "users": [
-        {
-          "name": "Alice",
-          "officeHours": {
-            "timeZone": "Europe/Paris",
-            "start": 9,
-            "end": 18
-          }
-        },
-        {
-          "name": "Bob",
-          "officeHours": {
-            "timeZone": "Asia/Singapore",
-            "start": 8,
-            "end": 17
-          }
-        }
-    ]
-}
+# # Example data input
+# data = {
+#     "emails": [
+#         {
+#           "subject": "subject",
+#           "sender": "Alice",
+#           "receiver": "Bob",
+#           "timeSent": "2024-01-12T15:00:00+01:00"
+#         },
+#         {
+#           "subject": "RE: subject",
+#           "sender": "Bob",
+#           "receiver": "Alice",
+#           "timeSent": "2024-01-15T09:00:00+08:00"
+#         },
+#         {
+#           "subject": "RE: RE: subject",
+#           "sender": "Alice",
+#           "receiver": "Bob",
+#           "timeSent": "2024-01-16T09:05:00+01:00"
+#         }
+#     ],
+#     "users": [
+#         {
+#           "name": "Alice",
+#           "officeHours": {
+#             "timeZone": "Europe/Paris",
+#             "start": 9,
+#             "end": 18
+#           }
+#         },
+#         {
+#           "name": "Bob",
+#           "officeHours": {
+#             "timeZone": "Asia/Singapore",
+#             "start": 8,
+#             "end": 17
+#           }
+#         }
+#     ]
+# }
 
-# Output the calculated response times
-print(calculate_response_times(data))
+# # Output the calculated response times
+# print(calculate_response_times(data))
