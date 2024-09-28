@@ -4,3 +4,4 @@ app = Flask(__name__)
 import routes.square
 import routes.bobby1
 import routes.cool
+import routes.klotski
