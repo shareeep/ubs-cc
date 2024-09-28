@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 @app.route('/square', methods=['POST'])
+
 def evaluate():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
@@ -16,3 +17,4 @@ def evaluate():
     result = input_value * input_value
     logging.info("My result :{}".format(result))
     return json.dumps(result)
+
