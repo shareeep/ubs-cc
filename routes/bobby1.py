@@ -1,52 +1,55 @@
+import json
+import logging
+from flask import request, jsonify
 from collections import defaultdict, deque
+from routes import app
 
-def min_hours_to_resolve_bugs(projects):
-    time = projects['time']
-    prerequisites = projects['prerequisites']
-    n = len(time)
+logger = logging.getLogger(__name__)
+
+@app.route('/bugfixer/p1', methods=['POST'])
+
+def bugfixer():
+    data = request.get_json()
     
-    # Create graph and in-degree array
-    graph = defaultdict(list)
-    in_degree = [0] * n
+    logging.info("Data sent for evaluation: {}".format(data))
     
-    # Build the graph
-    for a, b in prerequisites:
-        graph[a-1].append(b-1)
-        in_degree[b-1] += 1
+    time = data.get("time", [])
+    prerequisites = data.get("prerequisites", [])
     
-    # Queue for topological sort
-    queue = deque()
-    
-    # Dynamic array to store the minimum time to complete each project
-    min_time = [0] * n
-    
-    # Initialize queue with projects that have no prerequisites
-    for i in range(n):
-        if in_degree[i] == 0:
-            queue.append(i)
-            min_time[i] = time[i]
-    
-    # Topological sort and calculate the minimum time for each project
-    while queue:
-        current = queue.popleft()
+    def min_hours_to_resolve_bugs(time, prerequisites):
+        n = len(time)
         
-        # Process all the neighbors
-        for neighbor in graph[current]:
-            # Update the time for the dependent project
-            min_time[neighbor] = max(min_time[neighbor], min_time[current] + time[neighbor])
-            in_degree[neighbor] -= 1
+        graph = defaultdict(list)
+        in_degree = [0] * n
+        
+        for a, b in prerequisites:
+            graph[a-1].append(b-1)
+            in_degree[b-1] += 1
+        
+        queue = deque()
+        
+        min_time = [0] * n
+        
+        for i in range(n):
+            if in_degree[i] == 0:
+                queue.append(i)
+                min_time[i] = time[i]
+        
+        while queue:
+            current = queue.popleft()
             
-            # If in-degree becomes zero, add it to the queue
-            if in_degree[neighbor] == 0:
-                queue.append(neighbor)
+            for neighbor in graph[current]:
+                min_time[neighbor] = max(min_time[neighbor], min_time[current] + time[neighbor])
+                in_degree[neighbor] -= 1
+                
+                if in_degree[neighbor] == 0:
+                    queue.append(neighbor)
+        
+        return max(min_time)
+
+    result = min_hours_to_resolve_bugs(time, prerequisites)
     
-    # The total time will be the maximum time taken to complete any project
-    return max(min_time)
+    logging.info("Minimum hours needed: {}".format(result))
+    
 
-# Example usage
-projects = {
-    "time": [1, 2, 3, 4, 5],
-    "prerequisites": [(1, 2), (3, 4), (2, 5), (4, 5)]
-}
-
-print(min_hours_to_resolve_bugs(projects))  # Output should be 12
+    return jsonify({"result": result})
