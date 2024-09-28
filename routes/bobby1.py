@@ -42,7 +42,7 @@ def bugfixer():
         logging.info("Minimum hours needed: {}".format(finalResult))
 
         # Return the result as JSON
-        return jsonify({"result": finalResult})
+        return jsonify(finalResult)
 
     except Exception as e:
         logging.error(f"Unknown error occurred: {e}")
