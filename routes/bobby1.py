@@ -15,32 +15,34 @@ def bugfixer():
             return jsonify({"error": "No input data provided"}), 400
 
         logging.info("Data sent for evaluation: {}".format(data))
+        finalResult = []
+        for item in data:
+            # Extract time and prerequisites from the input
+            time = item.get("time")
+            prerequisites = item.get("prerequisites")
 
-        # Extract time and prerequisites from the input
-        time = data.get("time")
-        prerequisites = data.get("prerequisites")
+            # Basic validation
+            if time is None:
+                return jsonify({"error": "'time' key is missing or has null value"}), 400
+            if prerequisites is None:
+                return jsonify({"error": "'prerequisites' key is missing or has null value"}), 400
 
-        # Basic validation
-        if time is None:
-            return jsonify({"error": "'time' key is missing or has null value"}), 400
-        if prerequisites is None:
-            return jsonify({"error": "'prerequisites' key is missing or has null value"}), 400
+            # Check that both are lists
+            if not isinstance(time, list) or not isinstance(prerequisites, list):
+                return jsonify({"error": "'time' and 'prerequisites' must be lists"}), 400
 
-        # Check that both are lists
-        if not isinstance(time, list) or not isinstance(prerequisites, list):
-            return jsonify({"error": "'time' and 'prerequisites' must be lists"}), 400
+            # Ensure 'time' array is not empty
+            if len(time) == 0:
+                return jsonify({"error": "'time' array is empty"}), 400
 
-        # Ensure 'time' array is not empty
-        if len(time) == 0:
-            return jsonify({"error": "'time' array is empty"}), 400
+            # Call the function to calculate the minimum hours
+            result = calculate_min_time(time, prerequisites)
+            finalResult.append(result)
 
-        # Call the function to calculate the minimum hours
-        result = calculate_min_time(time, prerequisites)
-
-        logging.info("Minimum hours needed: {}".format(result))
+        logging.info("Minimum hours needed: {}".format(finalResult))
 
         # Return the result as JSON
-        return jsonify({"result": result})
+        return jsonify({"result": finalResult})
 
     except Exception as e:
         logging.error(f"Unknown error occurred: {e}")
